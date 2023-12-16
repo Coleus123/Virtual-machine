@@ -1,0 +1,7 @@
+set 24 6
+set 25 28
+set 26 6
+nok 24 25 27 28
+fib 29 30 31 26
+output 28
+output 29
