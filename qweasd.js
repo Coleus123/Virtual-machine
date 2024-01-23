@@ -1,6 +1,7 @@
 let fs = require('fs');
-
+const readlineSync = require('readline-sync');
 let mem = new Array();
+let stack = new Array();
 let ip = 0;
 inText = fs.readFileSync('prog.spml');
 inText = inText.toString();
@@ -8,40 +9,99 @@ mem = inText.split(/ |\r\n/);
 mem.push("exit");
 while (mem[ip] != "exit"){
 	switch (mem[ip]) {
+		case 'input':
+			mem[parseInt(mem[ip+1])] = readlineSync.question('Введите число: ');
+			ip+=2;
+			break;
 		case 'set':
 			mem[parseInt(mem[ip+1])] = parseInt(mem[ip+2]);
 			ip+=3;
+			break;
+		case 'add':
+			mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+1])] + mem[parseInt(mem[ip+2])];
+			ip +=4;
+			break;
+		case 'divc':
+			mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+1])] % mem[parseInt(mem[ip+2])];
+			ip +=4;
+			break;
+		case 'div':
+			mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+1])] / mem[parseInt(mem[ip+2])];
+			ip +=4;
+			break;
+		case 'mult':
+			mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+1])] * mem[parseInt(mem[ip+2])];
+			ip +=4;
+			break;
+		case 'sub':
+			mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+1])] - mem[parseInt(mem[ip+2])];
+			ip +=4;
 			break;
 		case 'output':
 			console.log(mem[mem[ip+1]]);
 			ip+=2;
 			break;
-		case 'nok':
-			mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+1])];
-			mem[parseInt(mem[ip+4])] = mem[parseInt(mem[ip+2])];
-			while (mem[parseInt(mem[ip+3])] != mem[parseInt(mem[ip+4])]){
-				if (mem[parseInt(mem[ip+3])] > mem[parseInt(mem[ip+4])])
-				{
-				mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+3])] - mem[parseInt(mem[ip+4])];
-				}
-				else {
-					mem[parseInt(mem[ip+4])] = mem[parseInt(mem[ip+4])] - mem[parseInt(mem[ip+3])];
-				}
-			}
-			mem[parseInt(mem[ip+4])] = (mem[parseInt(mem[ip+1])] * mem[parseInt(mem[ip+2])]) / mem[parseInt(mem[ip+3])];
-			ip += 5;
+		case 'assignment':
+			mem[parseInt(mem[ip+1])] = mem[parseInt(mem[ip+2])];
+			ip += 3;
 			break;
-		case 'fib':
-			mem[parseInt(mem[ip+1])] = 0;
-			mem[parseInt(mem[ip+2])] = 1;
-			mem[parseInt(mem[ip+4])]-=1;
-			while (mem[parseInt(mem[ip+4])] > 0){
-				mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+2])];
-				mem[parseInt(mem[ip+2])] = mem[parseInt(mem[ip+2])] + mem[parseInt(mem[ip+1])];
-				mem[parseInt(mem[ip+1])] = mem[parseInt(mem[ip+3])];
-				mem[parseInt(mem[ip+4])]-=1;
+		case 'loop':
+			if (mem[parseInt(mem[ip+1])] > 0){
+				stack.push(ip);
+				ip+=2;
+				while (mem[ip] != "endloop"){
+					switch (mem[ip]) {
+						case 'input':
+							mem[parseInt(mem[ip+1])] = readlineSync.question('Введите число: ');
+							ip+=2;
+							break;
+						case 'set':
+							mem[parseInt(mem[ip+1])] = parseInt(mem[ip+2]);
+
+							ip+=3;
+							break;
+						case 'output':
+							console.log(mem[mem[ip+1]]);
+							ip+=2;
+							break;
+						case 'add':
+							mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+1])] + mem[parseInt(mem[ip+2])];
+
+							ip +=4;
+							break;
+						case 'divc':
+							mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+1])] % mem[parseInt(mem[ip+2])];
+							ip +=4;
+							break;
+						case 'div':
+							mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+1])] / mem[parseInt(mem[ip+2])];
+							ip +=4;
+							break;
+						case 'mult':
+							mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+1])] * mem[parseInt(mem[ip+2])];
+							ip +=4;
+							break;
+						case 'sub':
+							mem[parseInt(mem[ip+3])] = mem[parseInt(mem[ip+1])] - mem[parseInt(mem[ip+2])];
+							ip +=4;
+							break;
+						case 'assignment':
+							mem[parseInt(mem[ip+1])] = mem[parseInt(mem[ip+2])];
+							ip += 3;
+							break;
+					}
+				}
+				ip = stack[stack.length - 1];
+				break;
 			}
-			ip+=5;
-			break;
+			if (mem[parseInt(mem[ip+1])] == 0){
+				ip+=2;
+				while (mem[ip] != "endloop"){
+					ip += 1;
+				}
+				stack.pop();
+				ip += 1;
+				break;
+			}
 	}
 }
