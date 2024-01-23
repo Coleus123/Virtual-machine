@@ -1,7 +1,23 @@
-set 24 6
-set 25 28
-set 26 6
-nok 24 25 27 28
-fib 29 30 31 26
-output 28
-output 29
+input 100
+input 101
+input 102
+assignment 105 101
+assignment 106 102
+set 103 1
+set 150 1
+set 151 0
+loop 100
+assignment 152 150
+add 150 151 150
+assignment 151 152
+sub 100 103 100
+endloop
+loop 102
+assignment 104 102
+divc 101 102 102
+assignment 101 104
+endloop
+mult 105 106 105
+div 105 101 105
+output 151
+output 105
